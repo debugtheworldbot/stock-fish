@@ -19,7 +19,6 @@ function App() {
 		sh: [],
 		sz: [],
 	})
-	const [type, setType] = useState<'sh' | 'sz'>('sh')
 	const [codeList, setCodeList] = useAtom(codeListAtom)
 
 	const fetchStock = useCallback(async () => {
@@ -29,21 +28,43 @@ function App() {
 			sh,
 			sz,
 		})
-	}, [codeList.sh, codeList.sz])
+	}, [codeList])
 
 	useEffect(() => {
 		fetchStock()
 	}, [fetchStock])
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const [pendingStock, setPendingStock] = useState<{
+		sh: StockValue[]
+		sz: StockValue[]
+	}>({
+		sh: [],
+		sz: [],
+	})
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		const target = e.target as HTMLFormElement
 		const code = (target.elements[0] as HTMLInputElement).value
+		const sh = (await getShValue([code])) || []
+		const sz = (await getSzValue([code])) || []
+		console.log(sh, sz)
+		if (sh.length > 0 && sz.length > 0) {
+			setPendingStock({
+				sh,
+				sz,
+			})
+		} else if (sh.length > 0) {
+			setCodeList({
+				...codeList,
+				sh: [...codeList.sh, code],
+			})
+		} else if (sz.length > 0) {
+			setCodeList({
+				...codeList,
+				sz: [...codeList.sz, code],
+			})
+		}
 		target.reset()
-		setCodeList({
-			...codeList,
-			[type]: [...codeList[type], code],
-		})
 	}
 
 	useInterval(fetchStock, 5000)
@@ -99,17 +120,50 @@ function App() {
 						</span>
 					</button>
 				))}
-				<select
-					onChange={(e) => setType(e.target.value as 'sh' | 'sz')}
-					className='w-fit px-2 border rounded'
-				>
-					<option value='sh'>沪</option>
-					<option value='sz'>深</option>
-				</select>
 				<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
 					<input placeholder='股票代码' className='w-fit px-2 border rounded' />
-					<button type='submit'>添加</button>
+					<button className='px-2' type='submit'>
+						添加
+					</button>
 				</form>
+				{pendingStock.sh.length > 0 && (
+					<button
+						className='bg-green-400 rounded px-2'
+						onClick={() => {
+							setStockList({
+								...stockList,
+								sh: [...stockList.sh, ...pendingStock.sh],
+							})
+							setPendingStock({
+								sh: [],
+								sz: [],
+							})
+						}}
+					>
+						{pendingStock.sh.map((stock) => (
+							<span>{stock.f14}</span>
+						))}
+					</button>
+				)}
+				{pendingStock.sz.length > 0 && (
+					<button
+						className='bg-green-400 rounded px-2'
+						onClick={() => {
+							setStockList({
+								...stockList,
+								sz: [...stockList.sz, ...pendingStock.sz],
+							})
+							setPendingStock({
+								sh: [],
+								sz: [],
+							})
+						}}
+					>
+						{pendingStock.sz.map((stock) => (
+							<span>{stock.f14}</span>
+						))}
+					</button>
+				)}
 			</div>
 		</main>
 	)
