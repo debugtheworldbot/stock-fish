@@ -29,10 +29,8 @@ function App() {
 	return (
 		<main className='w-screen min-h-screen'>
 			<iframe className='w-screen h-screen' src='https://www.baidu.com' />
-			<button
-				onClick={fetchStock}
-				className='flex w-full py-2 bg-transparent justify-center items-center gap-2'
-			>
+			<div className='flex w-full py-2 bg-transparent justify-center items-center gap-2'>
+				<button onClick={fetchStock}>刷新</button>
 				{stockList.map((stock) => (
 					<button
 						onClick={() => {
@@ -52,7 +50,7 @@ function App() {
 					<input placeholder='股票代码' className='w-fit border rounded' />
 					<button type='submit'>添加</button>
 				</form>
-			</button>
+			</div>
 		</main>
 	)
 }
