@@ -164,6 +164,13 @@ function App() {
 						))}
 					</button>
 				)}
+				<a
+					className='ml-2 px-2'
+					href='https://jinshuju.net/f/aDbpnC'
+					target='_blank'
+				>
+					反馈
+				</a>
 			</div>
 		</main>
 	)
