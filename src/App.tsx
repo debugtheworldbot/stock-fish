@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import './App.css'
 import { getStockValue, StockValue } from './utils/api'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-const codeListAtom = atomWithStorage<string[]>('codeList', ['600519'])
+const codeListAtom = atomWithStorage<string[]>('codeList', ['600519', '600001'])
 
 function App() {
 	const [stockList, setStockList] = useState<StockValue[]>([])
@@ -26,29 +26,31 @@ function App() {
 		setCodeList([...codeList, code])
 	}
 
+	useInterval(fetchStock, 5000)
+
 	return (
-		<main className='w-screen min-h-screen'>
-			<iframe className='w-screen h-screen' src='https://www.baidu.com' />
-			<div className='flex w-full py-2 bg-transparent justify-center items-center gap-2'>
-				<button className='px-2' onClick={fetchStock}>
-					刷新
-				</button>
+		<main className='w-screen h-screen'>
+			<iframe
+				className='w-screen h-full'
+				src='https://cn.bing.com/search?q=dff'
+			/>
+			<div className='flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-nowrap'>
 				{stockList.map((stock) => (
 					<button
 						onClick={() => {
 							setCodeList(codeList.filter((code) => code !== stock.f12))
 						}}
-						className='hover:bg-red-400 bg-transparent px-2 py-1 rounded transition-all'
+						className='hover:bg-red-400 bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
 						key={stock.f12}
 					>
 						<span>{stock.f14} </span>
 						<span>
 							{stock.f4 >= 0 ? '▲' : '▼'}
-							{(stock.f4 / stock.f18).toFixed(2)}%
+							{((stock.f4 * 100) / stock.f18).toFixed(2)}%
 						</span>
 					</button>
 				))}
-				<form onSubmit={handleSubmit} className='flex gap-2'>
+				<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
 					<input placeholder='股票代码' className='w-fit px-2 border rounded' />
 					<button type='submit'>添加</button>
 				</form>
@@ -58,3 +60,28 @@ function App() {
 }
 
 export default App
+
+type IntervalFunction = () => unknown | void
+
+const useInterval = (callback: IntervalFunction, delay: number | null) => {
+	const savedCallback = useRef<IntervalFunction | null>(null)
+
+	useEffect(() => {
+		if (delay === null) return
+
+		savedCallback.current = callback
+	})
+
+	useEffect(() => {
+		if (delay === null) return
+		function tick() {
+			if (savedCallback.current !== null) {
+				savedCallback.current()
+			}
+		}
+		const id = setInterval(tick, delay)
+		return () => {
+			clearInterval(id)
+		}
+	}, [delay])
+}

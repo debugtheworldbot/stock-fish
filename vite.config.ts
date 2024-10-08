@@ -7,7 +7,18 @@ export default defineConfig({
 	plugins: [
 		react(),
 		VitePWA({
-			injectRegister: 'inline',
+			manifest: {
+				name: '股票',
+				short_name: '股票',
+				theme_color: '#ffffff',
+				id: 'com.keke.stock',
+			},
+			registerType: 'autoUpdate',
+			injectRegister: 'auto',
+			// devOptions: {
+			// 	enabled: true,
+			// 	/* other options */
+			// },
 		}),
 	],
 })
