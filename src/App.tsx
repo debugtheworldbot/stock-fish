@@ -3,7 +3,13 @@ import './App.css'
 import { getStockValue, StockValue } from './utils/api'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-const codeListAtom = atomWithStorage<string[]>('codeList', ['600519', '600001'])
+const codeListAtom = atomWithStorage<string[]>('codeList', [
+	'000001',
+	'399001',
+	'399006',
+	'600519',
+	'510300',
+])
 
 function App() {
 	const [stockList, setStockList] = useState<StockValue[]>([])

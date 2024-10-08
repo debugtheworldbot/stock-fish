@@ -15,10 +15,10 @@ export default defineConfig({
 			},
 			registerType: 'autoUpdate',
 			injectRegister: 'auto',
-			// devOptions: {
-			// 	enabled: true,
-			// 	/* other options */
-			// },
+			devOptions: {
+				enabled: true,
+				/* other options */
+			},
 		}),
 	],
 })
