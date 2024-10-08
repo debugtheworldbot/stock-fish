@@ -54,7 +54,7 @@ function App() {
 				className='w-screen h-full'
 				src='https://cn.bing.com/search?q=产品经理职责'
 			/>
-			<div className='opacity-0 hover:opacity-100 transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap'>
+			<div className='transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap'>
 				{stockList.sh?.map((stock) => (
 					<button
 						onClick={() => {
