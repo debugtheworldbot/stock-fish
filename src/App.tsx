@@ -3,7 +3,7 @@ import './App.css'
 import { getStockValue, StockValue } from './utils/api'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-const codeListAtom = atomWithStorage<string[]>('codeList', [])
+const codeListAtom = atomWithStorage<string[]>('codeList', ['600519'])
 
 function App() {
 	const [stockList, setStockList] = useState<StockValue[]>([])
@@ -30,7 +30,9 @@ function App() {
 		<main className='w-screen min-h-screen'>
 			<iframe className='w-screen h-screen' src='https://www.baidu.com' />
 			<div className='flex w-full py-2 bg-transparent justify-center items-center gap-2'>
-				<button onClick={fetchStock}>刷新</button>
+				<button className='px-2' onClick={fetchStock}>
+					刷新
+				</button>
 				{stockList.map((stock) => (
 					<button
 						onClick={() => {
@@ -47,7 +49,7 @@ function App() {
 					</button>
 				))}
 				<form onSubmit={handleSubmit} className='flex gap-2'>
-					<input placeholder='股票代码' className='w-fit border rounded' />
+					<input placeholder='股票代码' className='w-fit px-2 border rounded' />
 					<button type='submit'>添加</button>
 				</form>
 			</div>
