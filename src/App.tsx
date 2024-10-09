@@ -22,10 +22,13 @@ const fontSizeAtom = atomWithStorage<'xs' | 'sm' | 'base' | 'xl'>(
 	'base'
 )
 
+const showSettingAtom = atomWithStorage<boolean>('showSetting', true)
 function App() {
 	const [stockList, setStockList] = useState<StockValue[]>([])
 	const [codeList, setCodeList] = useAtom(codeListAtom)
 	const [fontSize, setFontSize] = useAtom(fontSizeAtom)
+	const [showName, setShowName] = useAtom(showNameAtom)
+	const [showSetting, setShowSetting] = useAtom(showSettingAtom)
 
 	useEffect(() => {
 		if (!Array.isArray(codeList)) {
@@ -124,81 +127,98 @@ function App() {
 				{stockList.map((stock, index) => (
 					<StockItem key={index} stock={stock} type={stock.type} />
 				))}
-				<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
-					<input
-						maxLength={6}
-						minLength={5}
-						required
-						type='number'
-						placeholder='股票/场内基金代码'
-						className='w-fit px-2 border rounded'
-					/>
-					<button className='px-2' type='submit'>
-						添加
-					</button>
-				</form>
-				{pendingStock.sh && (
-					<button
-						className='bg-green-400 rounded px-2'
-						onClick={() => {
-							setCodeList([
-								...codeList,
-								{
-									type: 'sh' as const,
-									code: pendingStock.sh!.f12,
-								},
-							])
-							setPendingStock({
-								sh: null,
-								sz: null,
-							})
-						}}
-					>
-						{pendingStock.sh!.f14}
-					</button>
-				)}
-				{pendingStock.sz && (
-					<button
-						className='bg-green-400 rounded px-2'
-						onClick={() => {
-							setCodeList([
-								...codeList,
-								{
-									type: 'sz' as const,
-									code: pendingStock.sz!.f12,
-								},
-							])
-							setPendingStock({
-								sh: null,
-								sz: null,
-							})
-						}}
-					>
-						{pendingStock.sz!.f14}
-					</button>
-				)}
-				<div className='flex items-center gap-2 border rounded px-2'>
-					字号:
-					<select
-						value={fontSize}
-						onChange={(e) =>
-							setFontSize(e.target.value as 'xs' | 'sm' | 'base' | 'xl')
-						}
-						className='cursor-pointer'
-					>
-						<option value='xs'>最小</option>
-						<option value='sm'>小</option>
-						<option value='base'>中</option>
-						<option value='xl'>大</option>
-					</select>
-				</div>
-				<a
-					className='ml-2 px-2'
-					href='https://jinshuju.net/f/aDbpnC'
-					target='_blank'
+
+				<button
+					className={clsx(
+						'transition-all cursor-pointer px-2 rounded',
+						showSetting ? '' : 'rotate-180'
+					)}
+					onClick={() => setShowSetting(!showSetting)}
 				>
-					反馈
-				</a>
+					{'>'}
+				</button>
+				{showSetting && (
+					<>
+						<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
+							<input
+								maxLength={6}
+								minLength={5}
+								required
+								type='number'
+								placeholder='股票/场内基金代码'
+								className='w-fit px-2 border rounded'
+							/>
+							<button className='px-2' type='submit'>
+								添加
+							</button>
+						</form>
+						{pendingStock.sh && (
+							<button
+								className='bg-green-400 rounded px-2'
+								onClick={() => {
+									setCodeList([
+										...codeList,
+										{
+											type: 'sh' as const,
+											code: pendingStock.sh!.f12,
+										},
+									])
+									setPendingStock({
+										sh: null,
+										sz: null,
+									})
+								}}
+							>
+								{pendingStock.sh!.f14}
+							</button>
+						)}
+						{pendingStock.sz && (
+							<button
+								className='bg-green-400 rounded px-2'
+								onClick={() => {
+									setCodeList([
+										...codeList,
+										{
+											type: 'sz' as const,
+											code: pendingStock.sz!.f12,
+										},
+									])
+									setPendingStock({
+										sh: null,
+										sz: null,
+									})
+								}}
+							>
+								{pendingStock.sz!.f14}
+							</button>
+						)}
+						<div className='flex items-center gap-2 border rounded px-2'>
+							字号:
+							<select
+								value={fontSize}
+								onChange={(e) =>
+									setFontSize(e.target.value as 'xs' | 'sm' | 'base' | 'xl')
+								}
+								className='cursor-pointer'
+							>
+								<option value='xs'>最小</option>
+								<option value='sm'>小</option>
+								<option value='base'>中</option>
+								<option value='xl'>大</option>
+							</select>
+						</div>
+						<button className='px-2' onClick={() => setShowName(!showName)}>
+							显示股票{showName ? '代码' : '名称'}
+						</button>
+						<a
+							className='ml-2 px-2'
+							href='https://jinshuju.net/f/aDbpnC'
+							target='_blank'
+						>
+							反馈
+						</a>
+					</>
+				)}
 			</div>
 		</main>
 	)
