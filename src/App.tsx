@@ -12,17 +12,16 @@ import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import clsx from 'clsx'
 
+const defaultCodeList: { type: 'sh' | 'sz'; code: string }[] = [
+	{ type: 'sh', code: '000001' },
+	{ type: 'sh', code: '399001' },
+	{ type: 'sh', code: '399006' },
+	{ type: 'sh', code: '600519' },
+	{ type: 'sh', code: '510300' },
+]
 const codeListAtom = atomWithStorage<{ type: 'sh' | 'sz'; code: string }[]>(
 	'codeList',
-	[
-		{ type: 'sh', code: '000001' },
-		{ type: 'sh', code: '399001' },
-		{ type: 'sh', code: '399006' },
-		{ type: 'sh', code: '600519' },
-		{ type: 'sh', code: '510300' },
-		{ type: 'sz', code: '399002' },
-		{ type: 'sz', code: '399007' },
-	]
+	defaultCodeList
 )
 
 const fontSizeAtom = atomWithStorage<'xs' | 'sm' | 'base' | 'xl'>(
@@ -34,6 +33,12 @@ function App() {
 	const [stockList, setStockList] = useState<StockValue[]>([])
 	const [codeList, setCodeList] = useAtom(codeListAtom)
 	const [fontSize, setFontSize] = useAtom(fontSizeAtom)
+
+	useEffect(() => {
+		if (!Array.isArray(codeList)) {
+			setCodeList(defaultCodeList)
+		}
+	}, [codeList, setCodeList])
 
 	const fetchStock = useCallback(async () => {
 		const shCodes = codeList.filter((c) => c.type === 'sh').map((c) => c.code)
