@@ -73,7 +73,7 @@ function App() {
 		<main className='w-screen h-screen'>
 			<iframe
 				className='w-screen h-full'
-				src='https://cn.bing.com/search?q=产品经理职责'
+				src='https://cn.bing.com/search?q=如何高效工作为公司做贡献'
 			/>
 			<div className='transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap'>
 				{stockList.sh?.map((stock) => (
