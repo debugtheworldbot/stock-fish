@@ -86,10 +86,7 @@ function App() {
 			<div
 				className={clsx(
 					`transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap`,
-					fontSize === 'xs' && 'text-xs',
-					fontSize === 'sm' && 'text-sm',
-					fontSize === 'base' && 'text-base',
-					fontSize === 'xl' && 'text-xl'
+					`text-${fontSize}`
 				)}
 			>
 				{stockList.sh?.map((stock) => (
