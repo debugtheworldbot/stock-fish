@@ -126,6 +126,8 @@ function App() {
 				))}
 				<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
 					<input
+						maxLength={6}
+						type='number'
 						placeholder='股票/场内基金代码'
 						className='w-fit px-2 border rounded'
 					/>
