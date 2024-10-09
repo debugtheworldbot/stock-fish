@@ -189,13 +189,6 @@ function App() {
 						))}
 					</button>
 				)}
-				<a
-					className='ml-2 px-2'
-					href='https://jinshuju.net/f/aDbpnC'
-					target='_blank'
-				>
-					反馈
-				</a>
 				<div className='flex items-center gap-2 border rounded px-2'>
 					字号:
 					<select
@@ -203,6 +196,7 @@ function App() {
 						onChange={(e) =>
 							setFontSize(e.target.value as 'xs' | 'sm' | 'base' | 'xl')
 						}
+						className='cursor-pointer'
 					>
 						<option value='xs'>最小</option>
 						<option value='sm'>小</option>
@@ -210,6 +204,13 @@ function App() {
 						<option value='xl'>大</option>
 					</select>
 				</div>
+				<a
+					className='ml-2 px-2'
+					href='https://jinshuju.net/f/aDbpnC'
+					target='_blank'
+				>
+					反馈
+				</a>
 			</div>
 		</main>
 	)
