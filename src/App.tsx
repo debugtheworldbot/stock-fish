@@ -1,11 +1,4 @@
-import {
-	Dispatch,
-	SetStateAction,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import './App.css'
 import { getShValue, getSzValue, StockValue } from './utils/api'
 import { useAtom } from 'jotai'
@@ -129,12 +122,7 @@ function App() {
 				)}
 			>
 				{stockList.map((stock, index) => (
-					<StockItem
-						key={index}
-						stock={stock}
-						setStockList={setStockList}
-						type={stock.type}
-					/>
+					<StockItem key={index} stock={stock} type={stock.type} />
 				))}
 				<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
 					<input
@@ -243,15 +231,16 @@ const useInterval = (callback: IntervalFunction, delay: number | null) => {
 	}, [delay])
 }
 
+const showNameAtom = atomWithStorage<boolean>('showName', true)
 const StockItem = ({
 	stock,
 	type,
 }: {
 	stock: StockValue
-	setStockList: Dispatch<SetStateAction<StockValue[]>>
 	type: 'sh' | 'sz'
 }) => {
 	const [, setCodeList] = useAtom(codeListAtom)
+	const [showName, setShowName] = useAtom(showNameAtom)
 	return (
 		<div
 			className='relative group bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
@@ -285,8 +274,8 @@ const StockItem = ({
 					🗑
 				</button>
 			</div>
-			<span>
-				{stock.f14} {stock.f2 / 100}
+			<span className='cursor-pointer' onClick={() => setShowName(!showName)}>
+				{showName ? stock.f14 : stock.f12} {stock.f2 / 100}
 			</span>
 			<span>
 				{stock.f4 >= 0 ? '▲' : '▼'}
