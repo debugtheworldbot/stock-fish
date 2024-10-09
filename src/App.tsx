@@ -3,12 +3,18 @@ import './App.css'
 import { getShValue, getSzValue, StockValue } from './utils/api'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
+import clsx from 'clsx'
 const codeListAtom = atomWithStorage<{ sh: string[]; sz: string[] }>(
 	'codeList',
 	{
 		sh: ['000001', '399001', '399006', '600519', '510300'],
 		sz: ['399002', '399007'],
 	}
+)
+
+const fontSizeAtom = atomWithStorage<'xs' | 'sm' | 'base' | 'xl'>(
+	'fontSize',
+	'base'
 )
 
 function App() {
@@ -20,6 +26,7 @@ function App() {
 		sz: [],
 	})
 	const [codeList, setCodeList] = useAtom(codeListAtom)
+	const [fontSize, setFontSize] = useAtom(fontSizeAtom)
 
 	const fetchStock = useCallback(async () => {
 		const sh = await getShValue(codeList.sh)
@@ -76,7 +83,15 @@ function App() {
 				src='https://cn.bing.com/search?q=这里可以搜索任何想搜的'
 			/>
 			{/* )} */}
-			<div className='transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap'>
+			<div
+				className={clsx(
+					`transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap`,
+					fontSize === 'xs' && 'text-xs',
+					fontSize === 'sm' && 'text-sm',
+					fontSize === 'base' && 'text-base',
+					fontSize === 'xl' && 'text-xl'
+				)}
+			>
 				{stockList.sh?.map((stock) => (
 					<button
 						onClick={() => {
@@ -181,6 +196,20 @@ function App() {
 				>
 					反馈
 				</a>
+				<div className='flex items-center gap-2 border rounded px-2'>
+					字号:
+					<select
+						value={fontSize}
+						onChange={(e) =>
+							setFontSize(e.target.value as 'xs' | 'sm' | 'base' | 'xl')
+						}
+					>
+						<option value='xs'>最小</option>
+						<option value='sm'>小</option>
+						<option value='base'>中</option>
+						<option value='xl'>大</option>
+					</select>
+				</div>
 			</div>
 		</main>
 	)
