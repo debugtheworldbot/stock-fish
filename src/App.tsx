@@ -68,8 +68,8 @@ function App() {
 		e.preventDefault()
 		const target = e.target as HTMLFormElement
 		const code = (target.elements[0] as HTMLInputElement).value
-		const sh = (await getShValue([code]))[0] || []
-		const sz = (await getSzValue([code]))[0] || []
+		const sh = (await getShValue([code]))?.[0]
+		const sz = (await getSzValue([code]))?.[0]
 
 		let type: 'sh' | 'sz' | null = null
 
@@ -88,16 +88,15 @@ function App() {
 			codeList.some((c) => c.code === code && c.type === 'sz')
 		) {
 			type = 'sh'
-		} else {
-			if (sh && sz) {
-				setPendingStock({
-					sh,
-					sz,
-				})
-				target.reset()
-				return
-			}
+		} else if (sh && sz) {
+			setPendingStock({
+				sh,
+				sz,
+			})
+			target.reset()
+			return
 		}
+		type = sh ? 'sh' : 'sz'
 
 		if (!type) return
 		if (codeList.some((c) => c.code === code && c.type === type)) return
@@ -236,7 +235,6 @@ const useInterval = (callback: IntervalFunction, delay: number | null) => {
 
 const StockItem = ({
 	stock,
-	setStockList,
 	type,
 }: {
 	stock: StockValue
@@ -252,15 +250,6 @@ const StockItem = ({
 			<div className='opacity-0 group-hover:opacity-100 transition-all absolute -top-1 right-0 flex gap-1'>
 				<button
 					onClick={() => {
-						setStockList((s) => {
-							const index = s.findIndex(
-								(s) => s.f12 === stock.f12 && s.type === type
-							)
-							if (index === -1) return s
-							const newStock = [...s.slice(0, index), ...s.slice(index + 1)]
-							newStock.unshift(stock)
-							return newStock
-						})
 						setCodeList((c) => {
 							const index = c.findIndex(
 								(c) => c.type === type && c.code === stock.f12
@@ -277,9 +266,6 @@ const StockItem = ({
 				</button>
 				<button
 					onClick={() => {
-						setStockList((s) =>
-							s.filter((s) => !(s.type === type && s.f12 === stock.f12))
-						)
 						setCodeList((c) =>
 							c.filter((c) => !(c.type === type && c.code === stock.f12))
 						)
