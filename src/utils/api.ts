@@ -8,7 +8,7 @@ export const getShValue = async (
 		`https://push2.eastmoney.com/api/qt/ulist.np/get?fields=f1,f14,f2,f12,f5,f18,f4&secids=${idListStr}`
 	)
 	const stocks = response.data.data?.diff
-	return stocks
+	return stocks.map((stock: StockValue) => ({ ...stock, type: 'sh' }))
 }
 export const getSzValue = async (
 	stockCodeList: string[]
@@ -18,7 +18,7 @@ export const getSzValue = async (
 		`https://push2.eastmoney.com/api/qt/ulist.np/get?fields=f1,f14,f2,f12,f5,f18,f4&secids=${idListStr}`
 	)
 	const stocks = response.data.data?.diff
-	return stocks
+	return stocks.map((stock: StockValue) => ({ ...stock, type: 'sz' }))
 }
 
 export const getStockValue = async (
@@ -37,4 +37,5 @@ export type StockValue = {
 	f12: string // 股票代码
 	f14: string // 股票名称
 	f18: number // 开盘价
+	type: 'sh' | 'sz'
 }

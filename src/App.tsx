@@ -1,15 +1,28 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+	Dispatch,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
 import './App.css'
 import { getShValue, getSzValue, StockValue } from './utils/api'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import clsx from 'clsx'
-const codeListAtom = atomWithStorage<{ sh: string[]; sz: string[] }>(
+
+const codeListAtom = atomWithStorage<{ type: 'sh' | 'sz'; code: string }[]>(
 	'codeList',
-	{
-		sh: ['000001', '399001', '399006', '600519', '510300'],
-		sz: ['399002', '399007'],
-	}
+	[
+		{ type: 'sh', code: '000001' },
+		{ type: 'sh', code: '399001' },
+		{ type: 'sh', code: '399006' },
+		{ type: 'sh', code: '600519' },
+		{ type: 'sh', code: '510300' },
+		{ type: 'sz', code: '399002' },
+		{ type: 'sz', code: '399007' },
+	]
 )
 
 const fontSizeAtom = atomWithStorage<'xs' | 'sm' | 'base' | 'xl'>(
@@ -18,23 +31,26 @@ const fontSizeAtom = atomWithStorage<'xs' | 'sm' | 'base' | 'xl'>(
 )
 
 function App() {
-	const [stockList, setStockList] = useState<{
-		sh: StockValue[]
-		sz: StockValue[]
-	}>({
-		sh: [],
-		sz: [],
-	})
+	const [stockList, setStockList] = useState<StockValue[]>([])
 	const [codeList, setCodeList] = useAtom(codeListAtom)
 	const [fontSize, setFontSize] = useAtom(fontSizeAtom)
 
 	const fetchStock = useCallback(async () => {
-		const sh = await getShValue(codeList.sh)
-		const sz = await getSzValue(codeList.sz)
-		setStockList({
-			sh,
-			sz,
-		})
+		const shCodes = codeList.filter((c) => c.type === 'sh').map((c) => c.code)
+		const szCodes = codeList.filter((c) => c.type === 'sz').map((c) => c.code)
+
+		const [sh, sz] = await Promise.all([
+			getShValue(shCodes),
+			getSzValue(szCodes),
+		])
+
+		const orderedStocks = codeList
+			.map(({ type, code }) => {
+				const stockList = type === 'sh' ? sh : sz
+				return stockList.find((stock) => stock.f12 === code)
+			})
+			.filter(Boolean) as StockValue[]
+		setStockList(orderedStocks)
 	}, [codeList])
 
 	useEffect(() => {
@@ -60,15 +76,15 @@ function App() {
 				sz,
 			})
 		} else if (sh.length > 0) {
-			setCodeList({
-				...codeList,
-				sh: [...codeList.sh, code],
-			})
+			setCodeList([
+				...codeList.filter((c) => c.type === 'sh'),
+				{ type: 'sh', code },
+			])
 		} else if (sz.length > 0) {
-			setCodeList({
-				...codeList,
-				sz: [...codeList.sz, code],
-			})
+			setCodeList([
+				...codeList.filter((c) => c.type === 'sz'),
+				{ type: 'sz', code },
+			])
 		}
 		target.reset()
 	}
@@ -77,65 +93,23 @@ function App() {
 
 	return (
 		<main className='w-screen h-screen'>
-			{/* {!isDev && ( */}
 			<iframe
 				className='w-screen h-full'
 				src='https://cn.bing.com/search?q=这里可以搜索任何想搜的'
 			/>
-			{/* )} */}
 			<div
 				className={clsx(
 					`transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap`,
 					`text-${fontSize}`
 				)}
 			>
-				{stockList.sh?.map((stock) => (
-					<button
-						onClick={() => {
-							setStockList({
-								...stockList,
-								sh: stockList.sh.filter((s) => s.f12 !== stock.f12),
-							})
-							setCodeList({
-								...codeList,
-								sh: codeList.sh.filter((code) => code !== stock.f12),
-							})
-						}}
-						className='hover:bg-red-400 bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
-						key={stock.f14}
-					>
-						<span>
-							{stock.f14} {stock.f2 / 100}
-						</span>
-						<span>
-							{stock.f4 >= 0 ? '▲' : '▼'}
-							{((stock.f4 * 100) / stock.f18).toFixed(2)}%
-						</span>
-					</button>
-				))}
-				{stockList.sz?.map((stock) => (
-					<button
-						onClick={() => {
-							setStockList({
-								...stockList,
-								sz: stockList.sz.filter((s) => s.f12 !== stock.f12),
-							})
-							setCodeList({
-								...codeList,
-								sz: codeList.sz.filter((code) => code !== stock.f12),
-							})
-						}}
-						className='hover:bg-red-400 bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
-						key={stock.f14}
-					>
-						<span>
-							{stock.f14} {stock.f2 / 100}
-						</span>
-						<span>
-							{stock.f4 >= 0 ? '▲' : '▼'}
-							{((stock.f4 * 100) / stock.f18).toFixed(2)}%
-						</span>
-					</button>
+				{stockList.map((stock, index) => (
+					<StockItem
+						key={index}
+						stock={stock}
+						setStockList={setStockList}
+						type={stock.type}
+					/>
 				))}
 				<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
 					<input
@@ -156,7 +130,7 @@ function App() {
 						onClick={() => {
 							setStockList({
 								...stockList,
-								sh: [...stockList.sh, ...pendingStock.sh],
+								...pendingStock.sh,
 							})
 							setPendingStock({
 								sh: [],
@@ -175,7 +149,7 @@ function App() {
 						onClick={() => {
 							setStockList({
 								...stockList,
-								sz: [...stockList.sz, ...pendingStock.sz],
+								...pendingStock.sz,
 							})
 							setPendingStock({
 								sh: [],
@@ -240,4 +214,70 @@ const useInterval = (callback: IntervalFunction, delay: number | null) => {
 			clearInterval(id)
 		}
 	}, [delay])
+}
+
+const StockItem = ({
+	stock,
+	setStockList,
+	type,
+}: {
+	stock: StockValue
+	setStockList: Dispatch<SetStateAction<StockValue[]>>
+	type: 'sh' | 'sz'
+}) => {
+	const [, setCodeList] = useAtom(codeListAtom)
+	return (
+		<div
+			className='relative group bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
+			key={stock.f14}
+		>
+			<div className='opacity-0 group-hover:opacity-100 transition-all absolute -top-1 right-0 flex gap-1'>
+				<button
+					onClick={() => {
+						setStockList((s) => {
+							const index = s.findIndex(
+								(s) => s.f12 === stock.f12 && s.type === type
+							)
+							if (index === -1) return s
+							const newStock = [...s.slice(0, index), ...s.slice(index + 1)]
+							newStock.unshift(stock)
+							return newStock
+						})
+						setCodeList((c) => {
+							const index = c.findIndex(
+								(c) => c.type === type && c.code === stock.f12
+							)
+							if (index === -1) return c
+							const newCodeList = [...c.slice(0, index), ...c.slice(index + 1)]
+							newCodeList.unshift({ type, code: stock.f12 })
+							return newCodeList
+						})
+					}}
+					className='bg-green-200 rounded px-1'
+				>
+					📌
+				</button>
+				<button
+					onClick={() => {
+						setStockList((s) =>
+							s.filter((s) => !(s.type === type && s.f12 === stock.f12))
+						)
+						setCodeList((c) =>
+							c.filter((c) => !(c.type === type && c.code === stock.f12))
+						)
+					}}
+					className='bg-red-200 rounded px-1'
+				>
+					🗑
+				</button>
+			</div>
+			<span>
+				{stock.f14} {stock.f2 / 100}
+			</span>
+			<span>
+				{stock.f4 >= 0 ? '▲' : '▼'}
+				{((stock.f4 * 100) / stock.f18).toFixed(2)}%
+			</span>
+		</div>
+	)
 }
