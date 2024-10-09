@@ -208,7 +208,7 @@ function App() {
 							</select>
 						</div>
 						<button className='px-2' onClick={() => setShowName(!showName)}>
-							显示股票{showName ? '代码' : '名称'}
+							⇄显示股票{showName ? '代码' : '名称'}
 						</button>
 						<a
 							className='ml-2 px-2'
