@@ -131,7 +131,9 @@ function App() {
 						className='hover:bg-red-400 bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
 						key={stock.f14}
 					>
-						<span>{stock.f14} </span>
+						<span>
+							{stock.f14} {stock.f2 / 100}
+						</span>
 						<span>
 							{stock.f4 >= 0 ? '▲' : '▼'}
 							{((stock.f4 * 100) / stock.f18).toFixed(2)}%
