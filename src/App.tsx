@@ -100,8 +100,9 @@ function App() {
 			})
 			target.reset()
 			return
+		} else {
+			type = sh ? 'sh' : 'sz'
 		}
-		type = sh ? 'sh' : 'sz'
 
 		if (!type) return
 		if (codeList.some((c) => c.code === code && c.type === type)) return
