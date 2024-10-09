@@ -11,6 +11,8 @@ const codeListAtom = atomWithStorage<{ sh: string[]; sz: string[] }>(
 	}
 )
 
+const isDev = import.meta.env.MODE === 'development'
+
 function App() {
 	const [stockList, setStockList] = useState<{
 		sh: StockValue[]
@@ -71,10 +73,12 @@ function App() {
 
 	return (
 		<main className='w-screen h-screen'>
-			<iframe
-				className='w-screen h-full'
-				src='https://cn.bing.com/search?q=如何高效工作为公司做贡献'
-			/>
+			{!isDev && (
+				<iframe
+					className='w-screen h-full'
+					src='https://cn.bing.com/search?q=如何高效工作为公司做贡献'
+				/>
+			)}
 			<div className='transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap'>
 				{stockList.sh?.map((stock) => (
 					<button
@@ -121,7 +125,10 @@ function App() {
 					</button>
 				))}
 				<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
-					<input placeholder='股票代码' className='w-fit px-2 border rounded' />
+					<input
+						placeholder='股票/场内基金代码'
+						className='w-fit px-2 border rounded'
+					/>
 					<button className='px-2' type='submit'>
 						添加
 					</button>
