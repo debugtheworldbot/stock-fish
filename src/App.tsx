@@ -11,8 +11,6 @@ const codeListAtom = atomWithStorage<{ sh: string[]; sz: string[] }>(
 	}
 )
 
-const isDev = import.meta.env.MODE === 'development'
-
 function App() {
 	const [stockList, setStockList] = useState<{
 		sh: StockValue[]
@@ -49,7 +47,6 @@ function App() {
 		const code = (target.elements[0] as HTMLInputElement).value
 		const sh = (await getShValue([code])) || []
 		const sz = (await getSzValue([code])) || []
-		console.log(sh, sz)
 		if (sh.length > 0 && sz.length > 0) {
 			setPendingStock({
 				sh,
@@ -73,12 +70,12 @@ function App() {
 
 	return (
 		<main className='w-screen h-screen'>
-			{!isDev && (
-				<iframe
-					className='w-screen h-full'
-					src='https://cn.bing.com/search?q=如何高效工作为公司做贡献'
-				/>
-			)}
+			{/* {!isDev && ( */}
+			<iframe
+				className='w-screen h-full'
+				src='https://cn.bing.com/search?q=这里可以搜索任何想搜的'
+			/>
+			{/* )} */}
 			<div className='transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap'>
 				{stockList.sh?.map((stock) => (
 					<button
@@ -95,7 +92,9 @@ function App() {
 						className='hover:bg-red-400 bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
 						key={stock.f14}
 					>
-						<span>{stock.f14} </span>
+						<span>
+							{stock.f14} {stock.f2 / 100}
+						</span>
 						<span>
 							{stock.f4 >= 0 ? '▲' : '▼'}
 							{((stock.f4 * 100) / stock.f18).toFixed(2)}%
@@ -127,6 +126,8 @@ function App() {
 				<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
 					<input
 						maxLength={6}
+						minLength={5}
+						required
 						type='number'
 						placeholder='股票/场内基金代码'
 						className='w-fit px-2 border rounded'
