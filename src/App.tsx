@@ -36,11 +36,6 @@ function App() {
 
 	useEffect(() => {
 		if (!Array.isArray(codeList)) {
-			navigator.serviceWorker.getRegistrations().then((registrations) => {
-				for (const registration of registrations) {
-					registration.unregister()
-				}
-			})
 			const { sh, sz } = codeList as { sh: string[]; sz: string[] }
 			setCodeList([
 				...sh.map((c) => ({ type: 'sh', code: c })),
