@@ -67,7 +67,7 @@ function App() {
 		target.reset()
 	}
 
-	useInterval(fetchStock, 5000)
+	useInterval(fetchStock, 3000)
 
 	return (
 		<main className='w-screen h-screen'>
