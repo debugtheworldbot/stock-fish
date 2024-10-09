@@ -58,34 +58,50 @@ function App() {
 	}, [fetchStock])
 
 	const [pendingStock, setPendingStock] = useState<{
-		sh: StockValue[]
-		sz: StockValue[]
+		sh: StockValue | null
+		sz: StockValue | null
 	}>({
-		sh: [],
-		sz: [],
+		sh: null,
+		sz: null,
 	})
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		const target = e.target as HTMLFormElement
 		const code = (target.elements[0] as HTMLInputElement).value
-		const sh = (await getShValue([code])) || []
-		const sz = (await getSzValue([code])) || []
-		if (sh.length > 0 && sz.length > 0) {
-			setPendingStock({
-				sh,
-				sz,
-			})
-		} else if (sh.length > 0) {
-			setCodeList([
-				...codeList.filter((c) => c.type === 'sh'),
-				{ type: 'sh', code },
-			])
-		} else if (sz.length > 0) {
-			setCodeList([
-				...codeList.filter((c) => c.type === 'sz'),
-				{ type: 'sz', code },
-			])
+		const sh = (await getShValue([code]))[0] || []
+		const sz = (await getSzValue([code]))[0] || []
+
+		let type: 'sh' | 'sz' | null = null
+
+		if (
+			codeList.some((c) => c.code === code && c.type === 'sh') &&
+			codeList.some((c) => c.code === code && c.type === 'sz')
+		) {
+			return
+		} else if (
+			codeList.some((c) => c.code === code && c.type === 'sh') &&
+			!codeList.some((c) => c.code === code && c.type === 'sz')
+		) {
+			type = 'sz'
+		} else if (
+			!codeList.some((c) => c.code === code && c.type === 'sh') &&
+			codeList.some((c) => c.code === code && c.type === 'sz')
+		) {
+			type = 'sh'
+		} else {
+			if (sh && sz) {
+				setPendingStock({
+					sh,
+					sz,
+				})
+				target.reset()
+				return
+			}
 		}
+
+		if (!type) return
+		if (codeList.some((c) => c.code === code && c.type === type)) return
+		setCodeList([...codeList, { type, code }])
 		target.reset()
 	}
 
@@ -124,42 +140,44 @@ function App() {
 						添加
 					</button>
 				</form>
-				{pendingStock.sh.length > 0 && (
+				{pendingStock.sh && (
 					<button
 						className='bg-green-400 rounded px-2'
 						onClick={() => {
-							setStockList({
-								...stockList,
-								...pendingStock.sh,
-							})
+							setCodeList([
+								...codeList,
+								{
+									type: 'sh' as const,
+									code: pendingStock.sh!.f12,
+								},
+							])
 							setPendingStock({
-								sh: [],
-								sz: [],
+								sh: null,
+								sz: null,
 							})
 						}}
 					>
-						{pendingStock.sh.map((stock) => (
-							<span>{stock.f14}</span>
-						))}
+						{pendingStock.sh!.f14}
 					</button>
 				)}
-				{pendingStock.sz.length > 0 && (
+				{pendingStock.sz && (
 					<button
 						className='bg-green-400 rounded px-2'
 						onClick={() => {
-							setStockList({
-								...stockList,
-								...pendingStock.sz,
-							})
+							setCodeList([
+								...codeList,
+								{
+									type: 'sz' as const,
+									code: pendingStock.sz!.f12,
+								},
+							])
 							setPendingStock({
-								sh: [],
-								sz: [],
+								sh: null,
+								sz: null,
 							})
 						}}
 					>
-						{pendingStock.sz.map((stock) => (
-							<span>{stock.f14}</span>
-						))}
+						{pendingStock.sz!.f14}
 					</button>
 				)}
 				<div className='flex items-center gap-2 border rounded px-2'>
