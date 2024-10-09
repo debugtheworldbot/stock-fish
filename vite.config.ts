@@ -13,8 +13,9 @@ export default defineConfig({
 				theme_color: '#ffffff',
 				id: 'com.keke.stock',
 			},
+			filename: 'sw.js',
 			registerType: 'autoUpdate',
-			injectRegister: 'auto',
+			injectRegister: 'inline',
 			devOptions: {
 				enabled: true,
 				/* other options */
