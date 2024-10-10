@@ -1,6 +1,7 @@
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
@@ -29,12 +30,12 @@ export default function HelpDialog() {
 						<li>支持置顶和删除一支股票</li>
 						<li>所有内容都保存在本地，不会上传到服务器</li>
 					</ul>
-					<div>
+					<DialogDescription className='text-base'>
 						tips: 添加A股需输入6位数代码，例如贵州茅台为
 						<span className='font-mono'>600519</span>,
 						港股需输入5位数代码，例如腾讯为
 						<span className='font-mono'>00700</span>
-					</div>
+					</DialogDescription>
 				</DialogHeader>
 			</DialogContent>
 		</Dialog>
