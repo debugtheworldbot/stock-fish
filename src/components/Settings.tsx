@@ -5,6 +5,7 @@ import {
 	CodeIcon,
 	EyeClosedIcon,
 	EyeOpenIcon,
+	PlusCircledIcon,
 	TextIcon,
 } from '@radix-ui/react-icons'
 import clsx from 'clsx'
@@ -101,13 +102,13 @@ export default function Settings() {
 							placeholder='A股/港股/场内基金代码'
 							className='w-fit px-2 border rounded'
 						/>
-						<Button className='' variant='secondary'>
+						<Button className='flex' variant='outline'>
 							添加
 						</Button>
 					</form>
 					{pendingStock.sh && (
-						<button
-							className='bg-green-400 rounded px-2'
+						<Button
+							className='hover:bg-green-400 rounded px-2 flex gap-1'
 							onClick={() => {
 								setCodeList([
 									...codeList,
@@ -122,12 +123,13 @@ export default function Settings() {
 								})
 							}}
 						>
+							<PlusCircledIcon />
 							{pendingStock.sh!.name}
-						</button>
+						</Button>
 					)}
 					{pendingStock.sz && (
-						<button
-							className='bg-green-400 rounded px-2'
+						<Button
+							className='hover:bg-green-400 rounded px-2 flex gap-1'
 							onClick={() => {
 								setCodeList([
 									...codeList,
@@ -142,8 +144,9 @@ export default function Settings() {
 								})
 							}}
 						>
+							<PlusCircledIcon />
 							{pendingStock.sz!.name}
-						</button>
+						</Button>
 					)}
 					<NameSwitch />
 					<FontSizeSelect />
@@ -164,24 +167,22 @@ export default function Settings() {
 const FontSizeSelect = () => {
 	const [fontSize, setFontSize] = useAtom(fontSizeAtom)
 	return (
-		<div className='h-full'>
-			<Select
-				value={fontSize}
-				onValueChange={(value) =>
-					setFontSize(value as 'xs' | 'sm' | 'base' | 'xl')
-				}
-			>
-				<SelectTrigger className='w-fit h-full'>
-					<SelectValue placeholder='字号' />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectItem value='xs'>最小字号</SelectItem>
-					<SelectItem value='sm'>小字号</SelectItem>
-					<SelectItem value='base'>中字号</SelectItem>
-					<SelectItem value='xl'>大字号</SelectItem>
-				</SelectContent>
-			</Select>
-		</div>
+		<Select
+			value={fontSize}
+			onValueChange={(value) =>
+				setFontSize(value as 'xs' | 'sm' | 'base' | 'xl')
+			}
+		>
+			<SelectTrigger className='w-fit'>
+				<SelectValue placeholder='字号' />
+			</SelectTrigger>
+			<SelectContent>
+				<SelectItem value='xs'>最小字号</SelectItem>
+				<SelectItem value='sm'>小字号</SelectItem>
+				<SelectItem value='base'>中字号</SelectItem>
+				<SelectItem value='xl'>大字号</SelectItem>
+			</SelectContent>
+		</Select>
 	)
 }
 
@@ -190,14 +191,10 @@ const NameSwitch = () => {
 	return (
 		<Button
 			variant='outline'
-			className='px-2 rounded flex items-center gap-1'
+			className='flex items-center gap-1'
 			onClick={() => setShowName(!showName)}
 		>
-			{showName ? (
-				<CodeIcon className='w-[1em] h-[1em]' />
-			) : (
-				<TextIcon className='w-[1em] h-[1em]' />
-			)}
+			{showName ? <CodeIcon /> : <TextIcon />}
 			显示股票{showName ? '代码' : '名称'}
 		</Button>
 	)

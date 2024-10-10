@@ -34,7 +34,7 @@ export const StockItem = ({ stock, type }: { stock: Stock; type: Market }) => {
 							c.filter((c) => !(c.type === type && c.code === stock.code))
 						)
 					}}
-					className='transition-all border p-0.5 rounded bg-white hover:bg-red-100'
+					className='transition-all border p-0.5 rounded bg-white hover:bg-red-300'
 				>
 					<TrashIcon className='w-[1em] h-[1em]' />
 				</button>
