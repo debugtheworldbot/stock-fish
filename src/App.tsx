@@ -295,10 +295,11 @@ const StockItem = ({
 				</button>
 			</div>
 			<span className='cursor-pointer' onClick={() => setShowName(!showName)}>
-				{showName ? stock.f14 : stock.f12} {stock.f2 / 100}{' '}
+				{showName ? stock.f14 : stock.f12}
 			</span>
-			<span>
-				{stock.f4 >= 0 ? '△' : '▽'}
+			<span className='font-mono'> {(stock.f2 / 100).toFixed(2)}</span>
+			<span>{stock.f4 >= 0 ? '△' : '▽'}</span>
+			<span className='font-mono'>
 				{((stock.f4 * 100) / stock.f18).toFixed(2)}%
 			</span>
 		</div>
