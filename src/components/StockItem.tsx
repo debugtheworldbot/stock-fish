@@ -11,7 +11,7 @@ export const StockItem = ({ stock, type }: { stock: Stock; type: Market }) => {
 			className='relative group bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
 			key={stock.name}
 		>
-			<div className='opacity-0 group-hover:opacity-100 transition-all absolute -top-1 right-0 flex gap-1'>
+			<div className='opacity-0 group-hover:opacity-100 transition-all absolute -top-2 right-0 flex gap-1'>
 				<button
 					onClick={() => {
 						setCodeList((c) => {
@@ -24,9 +24,9 @@ export const StockItem = ({ stock, type }: { stock: Stock; type: Market }) => {
 							return newCodeList
 						})
 					}}
-					className='border p-0.5 rounded bg-transparent hover:bg-green-100'
+					className='transition-all border p-0.5 rounded bg-white hover:bg-green-100'
 				>
-					<DrawingPinIcon className='w-[0.8em] h-[0.8em]' />
+					<DrawingPinIcon className='w-[1em] h-[1em]' />
 				</button>
 				<button
 					onClick={() => {
@@ -34,9 +34,9 @@ export const StockItem = ({ stock, type }: { stock: Stock; type: Market }) => {
 							c.filter((c) => !(c.type === type && c.code === stock.code))
 						)
 					}}
-					className='border p-0.5 rounded bg-transparent hover:bg-red-100'
+					className='transition-all border p-0.5 rounded bg-white hover:bg-red-100'
 				>
-					<TrashIcon className='w-[0.8em] h-[0.8em]' />
+					<TrashIcon className='w-[1em] h-[1em]' />
 				</button>
 			</div>
 			<span className='cursor-pointer' onClick={() => setShowName(!showName)}>

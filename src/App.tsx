@@ -57,9 +57,8 @@ function App() {
 			/>
 			<div
 				className={clsx(
-					`transition-all fixed bottom-0 bg-white/80 backdrop-blur flex w-screen pl-6 items-center gap-2 overflow-y-scroll flex-wrap`,
-					`text-${fontSize}`,
-					fontSize === 'xs' ? 'py-0.5' : 'py-1'
+					`transition-all fixed bottom-0 bg-white/80 backdrop-blur flex w-screen pl-6 items-center gap-2 overflow-visible flex-wrap`,
+					`text-${fontSize}`
 				)}
 			>
 				{stockList.map((stock, index) => (
