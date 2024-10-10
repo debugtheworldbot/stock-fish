@@ -18,6 +18,9 @@
 a:hover {
 	color: #747bff;
 }
+button:hover {
+	background-color: #f0f0f0;
+}
 button,
 input,
 select {
