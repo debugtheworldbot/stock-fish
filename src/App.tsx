@@ -4,6 +4,7 @@ import { getHkValue, getShValue, Market, Stock, getSzValue } from './utils/api'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import clsx from 'clsx'
+import HelpDialog from './components/HelpDialog'
 
 const defaultCodeList: { type: Market; code: string }[] = [
 	{ type: 'sh', code: '000001' },
@@ -152,7 +153,7 @@ function App() {
 								minLength={5}
 								required
 								type='number'
-								placeholder='股票/场内基金代码'
+								placeholder='A股/港股/场内基金代码'
 								className='w-fit px-2 border rounded'
 							/>
 							<button className='px-2 rounded' type='submit'>
@@ -224,6 +225,7 @@ function App() {
 						>
 							反馈
 						</a>
+						<HelpDialog />
 					</>
 				)}
 			</div>
