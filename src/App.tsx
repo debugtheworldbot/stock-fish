@@ -7,6 +7,7 @@ import { codeListAtom, fontSizeAtom } from './lib/store'
 import { useInterval } from './lib/hooks'
 import { StockItem } from './components/StockItem'
 import Settings from './components/Settings'
+import { marketIsOpen } from './lib/utils'
 
 function App() {
 	const [stockList, setStockList] = useState<Stock[]>([])
@@ -47,7 +48,11 @@ function App() {
 		fetchStock()
 	}, [fetchStock])
 
-	useInterval(fetchStock, 3000)
+	useInterval(() => {
+		if (!marketIsOpen()) return
+
+		fetchStock()
+	}, 3000)
 
 	return (
 		<main className='w-screen h-screen'>
