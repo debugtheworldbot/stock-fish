@@ -134,8 +134,9 @@ function App() {
 			/>
 			<div
 				className={clsx(
-					`transition-all fixed bottom-0 bg-white flex w-screen p-2 pl-6 bg-transparent items-center gap-2 overflow-y-scroll flex-wrap`,
-					`text-${fontSize}`
+					`transition-all fixed bottom-0 bg-white/80 backdrop-blur flex w-screen pl-6 items-center gap-2 overflow-y-scroll flex-wrap`,
+					`text-${fontSize}`,
+					fontSize === 'xs' ? 'py-0.5' : 'py-1'
 				)}
 			>
 				{stockList.map((stock, index) => (
@@ -279,7 +280,7 @@ const StockItem = ({ stock, type }: { stock: Stock; type: Market }) => {
 			className='relative group bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
 			key={stock.name}
 		>
-			<div className='opacity-0 group-hover:opacity-100 transition-all absolute -top-2 right-0 flex gap-1'>
+			<div className='opacity-0 group-hover:opacity-100 transition-all absolute -top-1 right-0 flex gap-1'>
 				<button
 					onClick={() => {
 						setCodeList((c) => {
@@ -294,7 +295,7 @@ const StockItem = ({ stock, type }: { stock: Stock; type: Market }) => {
 					}}
 					className='border p-0.5 rounded bg-transparent hover:bg-green-100'
 				>
-					<DrawingPinIcon className='w-[1em] h-[1em]' />
+					<DrawingPinIcon className='w-[0.8em] h-[0.8em]' />
 				</button>
 				<button
 					onClick={() => {
@@ -304,7 +305,7 @@ const StockItem = ({ stock, type }: { stock: Stock; type: Market }) => {
 					}}
 					className='border p-0.5 rounded bg-transparent hover:bg-red-100'
 				>
-					<TrashIcon className='w-[1em] h-[1em]' />
+					<TrashIcon className='w-[0.8em] h-[0.8em]' />
 				</button>
 			</div>
 			<span className='cursor-pointer' onClick={() => setShowName(!showName)}>
