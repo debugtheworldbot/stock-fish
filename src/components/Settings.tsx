@@ -11,6 +11,13 @@ import clsx from 'clsx'
 import { useAtom } from 'jotai'
 import React, { useState } from 'react'
 import HelpDialog from './HelpDialog'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from './ui/select'
 
 export default function Settings() {
 	const [showSetting, setShowSetting] = useAtom(showSettingAtom)
@@ -155,20 +162,23 @@ export default function Settings() {
 const FontSizeSelect = () => {
 	const [fontSize, setFontSize] = useAtom(fontSizeAtom)
 	return (
-		<div className='flex items-center gap-2 border rounded px-2'>
-			字号
-			<select
+		<div className=''>
+			<Select
 				value={fontSize}
-				onChange={(e) =>
-					setFontSize(e.target.value as 'xs' | 'sm' | 'base' | 'xl')
+				onValueChange={(value) =>
+					setFontSize(value as 'xs' | 'sm' | 'base' | 'xl')
 				}
-				className='cursor-pointer rounded'
 			>
-				<option value='xs'>最小</option>
-				<option value='sm'>小</option>
-				<option value='base'>中</option>
-				<option value='xl'>大</option>
-			</select>
+				<SelectTrigger className='w-fit'>
+					<SelectValue placeholder='字号' />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value='xs'>最小字号</SelectItem>
+					<SelectItem value='sm'>小字号</SelectItem>
+					<SelectItem value='base'>中字号</SelectItem>
+					<SelectItem value='xl'>大字号</SelectItem>
+				</SelectContent>
+			</Select>
 		</div>
 	)
 }
