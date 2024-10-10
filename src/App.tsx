@@ -1,38 +1,28 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './App.css'
 import { getHkValue, getShValue, Market, Stock, getSzValue } from './utils/api'
 import { useAtom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
 import clsx from 'clsx'
 import HelpDialog from './components/HelpDialog'
+import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons'
 import {
-	DrawingPinIcon,
-	EyeClosedIcon,
-	EyeOpenIcon,
-	TrashIcon,
-} from '@radix-ui/react-icons'
+	codeListAtom,
+	fontSizeAtom,
+	showNameAtom,
+	showSettingAtom,
+} from './lib/store'
+import { useInterval } from './lib/hooks'
+import { StockItem } from './components/StockItem'
 
-const defaultCodeList: { type: Market; code: string }[] = [
-	{ type: 'sh', code: '000001' },
-	{ type: 'sh', code: '399001' },
-	{ type: 'sh', code: '399006' },
-	{ type: 'sh', code: '600519' },
-	{ type: 'sh', code: '510300' },
-	{ type: 'hk', code: '00700' },
-]
-const codeListAtom = atomWithStorage<{ type: Market; code: string }[]>(
-	'codeList',
-	defaultCodeList
-)
-
-const fontSizeAtom = atomWithStorage<'xs' | 'sm' | 'base' | 'xl'>(
-	'fontSize',
-	'base'
-)
-
-const showSettingAtom = atomWithStorage<boolean>('showSetting', true)
 function App() {
 	const [stockList, setStockList] = useState<Stock[]>([])
+	const [pendingStock, setPendingStock] = useState<{
+		sh: Stock | null
+		sz: Stock | null
+	}>({
+		sh: null,
+		sz: null,
+	})
 	const [codeList, setCodeList] = useAtom(codeListAtom)
 	const [fontSize, setFontSize] = useAtom(fontSizeAtom)
 	const [showName, setShowName] = useAtom(showNameAtom)
@@ -72,13 +62,8 @@ function App() {
 		fetchStock()
 	}, [fetchStock])
 
-	const [pendingStock, setPendingStock] = useState<{
-		sh: Stock | null
-		sz: Stock | null
-	}>({
-		sh: null,
-		sz: null,
-	})
+	useInterval(fetchStock, 3000)
+
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		const target = e.target as HTMLFormElement
@@ -87,35 +72,33 @@ function App() {
 		const sh = (await getShValue([code]))?.[0]
 		const sz = (await getSzValue([code]))?.[0]
 
-		console.log('hk', hk)
 		let type: Market | null = null
 
 		if (code.length === 5 && hk) {
 			type = 'hk'
-		} else if (
-			codeList.some((c) => c.code === code && c.type === 'sh') &&
-			codeList.some((c) => c.code === code && c.type === 'sz')
-		) {
-			return
-		} else if (
-			codeList.some((c) => c.code === code && c.type === 'sh') &&
-			!codeList.some((c) => c.code === code && c.type === 'sz')
-		) {
-			type = 'sz'
-		} else if (
-			!codeList.some((c) => c.code === code && c.type === 'sh') &&
-			codeList.some((c) => c.code === code && c.type === 'sz')
-		) {
-			type = 'sh'
-		} else if (sh && sz) {
-			setPendingStock({
-				sh,
-				sz,
-			})
-			target.reset()
-			return
+		} else if (code.length === 6) {
+			const existingShCode = codeList.find(
+				(c) => c.code === code && c.type === 'sh'
+			)
+			const existingSzCode = codeList.find(
+				(c) => c.code === code && c.type === 'sz'
+			)
+
+			if (existingShCode && existingSzCode) {
+				return // Code already exists in both SH and SZ
+			} else if (existingShCode) {
+				type = 'sz'
+			} else if (existingSzCode) {
+				type = 'sh'
+			} else if (sh && sz) {
+				setPendingStock({ sh, sz })
+				target.reset()
+				return
+			} else {
+				type = sh ? 'sh' : sz ? 'sz' : null
+			}
 		} else {
-			type = sh ? 'sh' : 'sz'
+			type = null // Invalid code length
 		}
 
 		if (!type) return
@@ -123,8 +106,6 @@ function App() {
 		setCodeList([...codeList, { type, code }])
 		target.reset()
 	}
-
-	useInterval(fetchStock, 3000)
 
 	return (
 		<main className='w-screen h-screen'>
@@ -245,75 +226,3 @@ function App() {
 }
 
 export default App
-
-type IntervalFunction = () => unknown | void
-
-const useInterval = (callback: IntervalFunction, delay: number | null) => {
-	const savedCallback = useRef<IntervalFunction | null>(null)
-
-	useEffect(() => {
-		if (delay === null) return
-
-		savedCallback.current = callback
-	})
-
-	useEffect(() => {
-		if (delay === null) return
-		function tick() {
-			if (savedCallback.current !== null) {
-				savedCallback.current()
-			}
-		}
-		const id = setInterval(tick, delay)
-		return () => {
-			clearInterval(id)
-		}
-	}, [delay])
-}
-
-const showNameAtom = atomWithStorage<boolean>('showName', true)
-const StockItem = ({ stock, type }: { stock: Stock; type: Market }) => {
-	const [, setCodeList] = useAtom(codeListAtom)
-	const [showName, setShowName] = useAtom(showNameAtom)
-	return (
-		<div
-			className='relative group bg-transparent px-2 py-1 rounded transition-all flex-shrink-0'
-			key={stock.name}
-		>
-			<div className='opacity-0 group-hover:opacity-100 transition-all absolute -top-1 right-0 flex gap-1'>
-				<button
-					onClick={() => {
-						setCodeList((c) => {
-							const index = c.findIndex(
-								(c) => c.type === type && c.code === stock.code
-							)
-							if (index === -1) return c
-							const newCodeList = [...c.slice(0, index), ...c.slice(index + 1)]
-							newCodeList.unshift({ type, code: stock.code })
-							return newCodeList
-						})
-					}}
-					className='border p-0.5 rounded bg-transparent hover:bg-green-100'
-				>
-					<DrawingPinIcon className='w-[0.8em] h-[0.8em]' />
-				</button>
-				<button
-					onClick={() => {
-						setCodeList((c) =>
-							c.filter((c) => !(c.type === type && c.code === stock.code))
-						)
-					}}
-					className='border p-0.5 rounded bg-transparent hover:bg-red-100'
-				>
-					<TrashIcon className='w-[0.8em] h-[0.8em]' />
-				</button>
-			</div>
-			<span className='cursor-pointer' onClick={() => setShowName(!showName)}>
-				{showName ? stock.name : stock.code}
-			</span>
-			<span className='font-mono'> {stock.current}</span>
-			<span>{stock.percent >= 0 ? '△' : '▽'}</span>
-			<span className='font-mono'>{stock.percent.toFixed(2)}%</span>
-		</div>
-	)
-}
