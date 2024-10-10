@@ -18,6 +18,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from './ui/select'
+import { Input } from './ui/input'
+import { Button } from './ui/button'
 
 export default function Settings() {
 	const [showSetting, setShowSetting] = useAtom(showSettingAtom)
@@ -77,7 +79,7 @@ export default function Settings() {
 		<>
 			<div
 				className={clsx(
-					'py-2 transition-all cursor-pointer px-2 rounded',
+					'py-2 transition-all hover:bg-neutral-100 cursor-pointer px-2 rounded',
 					showSetting ? '' : 'rotate-180'
 				)}
 				onClick={() => setShowSetting(!showSetting)}
@@ -91,7 +93,7 @@ export default function Settings() {
 			{showSetting && (
 				<>
 					<form onSubmit={handleSubmit} className='flex gap-2 flex-shrink-0'>
-						<input
+						<Input
 							maxLength={6}
 							minLength={5}
 							required
@@ -99,9 +101,9 @@ export default function Settings() {
 							placeholder='A股/港股/场内基金代码'
 							className='w-fit px-2 border rounded'
 						/>
-						<button className='px-2 rounded' type='submit'>
+						<Button className='' variant='secondary'>
 							添加
-						</button>
+						</Button>
 					</form>
 					{pendingStock.sh && (
 						<button
@@ -143,8 +145,9 @@ export default function Settings() {
 							{pendingStock.sz!.name}
 						</button>
 					)}
-					<FontSizeSelect />
 					<NameSwitch />
+					<FontSizeSelect />
+					<HelpDialog />
 					<a
 						className='ml-2 px-2'
 						href='https://jinshuju.net/f/aDbpnC'
@@ -152,7 +155,6 @@ export default function Settings() {
 					>
 						反馈
 					</a>
-					<HelpDialog />
 				</>
 			)}
 		</>
@@ -162,14 +164,14 @@ export default function Settings() {
 const FontSizeSelect = () => {
 	const [fontSize, setFontSize] = useAtom(fontSizeAtom)
 	return (
-		<div className=''>
+		<div className='h-full'>
 			<Select
 				value={fontSize}
 				onValueChange={(value) =>
 					setFontSize(value as 'xs' | 'sm' | 'base' | 'xl')
 				}
 			>
-				<SelectTrigger className='w-fit'>
+				<SelectTrigger className='w-fit h-full'>
 					<SelectValue placeholder='字号' />
 				</SelectTrigger>
 				<SelectContent>
@@ -186,7 +188,8 @@ const FontSizeSelect = () => {
 const NameSwitch = () => {
 	const [showName, setShowName] = useAtom(showNameAtom)
 	return (
-		<button
+		<Button
+			variant='outline'
 			className='px-2 rounded flex items-center gap-1'
 			onClick={() => setShowName(!showName)}
 		>
@@ -196,6 +199,6 @@ const NameSwitch = () => {
 				<TextIcon className='w-[1em] h-[1em]' />
 			)}
 			显示股票{showName ? '代码' : '名称'}
-		</button>
+		</Button>
 	)
 }

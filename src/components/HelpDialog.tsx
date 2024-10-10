@@ -1,3 +1,4 @@
+import { Button } from './ui/button'
 import {
 	Dialog,
 	DialogContent,
@@ -12,9 +13,9 @@ export default function HelpDialog() {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<button className='p-1 rounded'>
+				<Button variant='outline' size='icon'>
 					<QuestionMarkCircledIcon className='w-[1em] h-[1em]' />
-				</button>
+				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>

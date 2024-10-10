@@ -57,7 +57,7 @@ function App() {
 			/>
 			<div
 				className={clsx(
-					`transition-all fixed bottom-0 bg-white/80 backdrop-blur flex w-screen pl-6 items-center gap-2 overflow-visible flex-wrap`,
+					`transition-all fixed bottom-0 bg-white/80 backdrop-blur flex w-screen pl-6 pb-2 items-center gap-2 overflow-visible flex-wrap`,
 					`text-${fontSize}`
 				)}
 			>
