@@ -55,7 +55,7 @@ export const getHkValue = async (stockCodeList: string[]): Promise<Stock[]> => {
 			type: 'hk',
 			name: stock.name,
 			code: stock.code,
-			current: stock.current,
+			current: parseFloat(stock.current).toFixed(2),
 			percent: stock.percent,
 		})) || []
 	)
