@@ -57,7 +57,7 @@ function App() {
 	return (
 		<main className='w-screen h-screen'>
 			<iframe
-				className='w-screen h-full'
+				className='w-screen h-full select-none'
 				src='https://cn.bing.com/search?q=这里可以搜索任何想搜的'
 			/>
 			<div
