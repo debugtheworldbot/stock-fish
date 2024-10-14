@@ -20,12 +20,14 @@ export default function HelpDialog() {
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle className='text-2xl font-bold text-center'>
-						帮助
+						帮助说明
 					</DialogTitle>
-					<h2 className='text-xl'>目前支持的功能</h2>
 					<ul className='list-disc list-inside'>
 						<li>支持添加A股/港股/场内基金代码</li>
 						<li>开市时，所有数据每3秒更新一次</li>
+						<li>
+							港股的数据来源是港交所，获取的不是实时数据,可能和第三方交易所的数据会有点出入
+						</li>
 						<li>可调整字体大小</li>
 						<li>支持显示股票代码/名称切换</li>
 						<li>支持置顶和删除一支股票</li>
