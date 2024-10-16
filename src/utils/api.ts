@@ -12,7 +12,10 @@ export const getShValue = async (stockCodeList: string[]): Promise<Stock[]> => {
 			type: 'sh',
 			name: stock.f14,
 			code: stock.f12,
-			current: (stock.f2 / 100).toFixed(2),
+			current:
+				stock.f1 === 2
+					? (stock.f2 / 100).toFixed(2)
+					: (stock.f2 / 1000).toFixed(2),
 			percent: (stock.f4 * 100) / stock.f18,
 		})) || []
 	)
@@ -29,7 +32,10 @@ export const getSzValue = async (stockCodeList: string[]): Promise<Stock[]> => {
 			type: 'sz',
 			name: stock.f14,
 			code: stock.f12,
-			current: (stock.f2 / 100).toFixed(2),
+			current:
+				stock.f1 === 2
+					? (stock.f2 / 100).toFixed(2)
+					: (stock.f2 / 1000).toFixed(2),
 			percent: (stock.f4 * 100) / stock.f18,
 		})) || []
 	)
@@ -62,7 +68,7 @@ export const getHkValue = async (stockCodeList: string[]): Promise<Stock[]> => {
 }
 
 type StockValue = {
-	f1: number
+	f1: number // 股票类型 2 股票 3 指数?
 	f2: number // 现价
 	f4: number // 股票涨跌
 	f5: number // 成交量
