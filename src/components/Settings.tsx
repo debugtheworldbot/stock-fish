@@ -21,6 +21,7 @@ import {
 } from './ui/select'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
+import ExtensionDialog from './ExtensionDialog'
 
 export default function Settings() {
 	const [showSetting, setShowSetting] = useAtom(showSettingAtom)
@@ -158,6 +159,7 @@ export default function Settings() {
 					>
 						反馈
 					</a>
+					<ExtensionDialog />
 				</>
 			)}
 		</>
