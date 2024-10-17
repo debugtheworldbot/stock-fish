@@ -4,6 +4,7 @@ import { Button } from './ui/button'
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
@@ -34,10 +35,10 @@ export default function ExtensionDialog() {
 						<ExternalLinkIcon />
 						前往Chrome商店安装插件
 					</a>
-					<div>
+					<DialogDescription className='text-base'>
 						tips:
 						安装插件后，stockquiet.com网页显示的港股信息也会是实时的；如未安装，则显示港交所报价（港交所有15分钟延迟）
-					</div>
+					</DialogDescription>
 				</DialogHeader>
 			</DialogContent>
 		</Dialog>
